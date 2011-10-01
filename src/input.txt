@@ -1,0 +1,16 @@
+#books
+#title|author|no. of copies|ebook?(yes,no)|physical-price|ebook-price
+
+Absolute Java|Savitch|5|yes|75.00|15.00
+JAVA: How to Program|Deitel and Deitel|0|yes|65.00|12.00
+Computing Concepts with JAVA 3 Essentials|Horstman|5|no|114.72|0
+Java Software Solutions|Lewis and Loftus|4|no|80.00|0
+Java Program Design|Cohoon and Davidson|1|yes|51.00|10.00
+
+#users
+#id|password|name|email|shopper/admin|member/non-member[|cart-title1|cart-author1|ebook?]*   for any items in cart
+
+lc|lcpasswd|Lawrence Cavedon|lawrence@daintree.com.au|shopper|non-member|Absolute Java|Savitch|ebook|Java Program Design|Cohoon and Davidson|ebook
+xla|xlpw|Xiang Li|xiang@daintree.com.au|admin
+xl|xlpw|Xiang Li|xiang@daintree.com.au|shopper|non-member
+as|aspw|Andy Song|andy@daintree.com.au|shopper|member
