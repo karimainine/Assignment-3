@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DaintreeStore {
+    
+    public static HashMap<String, User> users = new HashMap<String, User>();
+    public static ArrayList<Item> items = new ArrayList<Item>();
     /**
      * 
      * @param user
@@ -223,60 +226,6 @@ public class DaintreeStore {
      *            main function initializes the lists and starts the application.
      */
     public static void main(String[] args) {
-        
-        // Initializing the Users
-        HashMap<String, User> users = new HashMap<String, User>();
-        
-        User user1 = new User("lc", "Lawrence Cavedon", "lawrence@daintree.com.au", "lcpasswd");
-        users.put(user1.getId(), user1);
-        
-        Administrator user2 = new Administrator("xla", "Xiang Li", "xiang@daintree.com.au", "xlpw");
-        users.put(user2.getId(), user2);
-        
-        User user3 = new User("xl", "Xiang Li", "xiang@daintree.com.au", "xlpw");
-        users.put(user3.getId(), user3);
-        
-        Member user4 = new Member("as", "Andy Song", "andy@daintree.com.au", "aspw");
-        users.put(user4.getId(), user4);
-        
-        // Initializing the Items
-        ArrayList<Item> items = new ArrayList<Item>();
-        
-        Book book1 = new Book("Absolute Java", "Savitch", 75.0, 15.0, 5);
-        Book book2 = new Book("JAVA: How to Program", "Deitel and Deitel", 65.0, 12.0, 0);
-        Book book3 = new Book("Computing Concepts with JAVA 3 Essentials", "Horstman", 114.72, 5);
-        Book book4 = new Book("Java Software Solutions", "Lewis and Loftus", 80.0, 5);
-        Book book5 = new Book("Java Program Design", "Cohoon and Davidson", 51.0, 10.0, 5);
-        
-        book2.addRecommendation(book1);
-        book3.addRecommendation(book1);
-        book3.addRecommendation(book2);
-        
-        Music music1 = new Music("At Folsom Prison", "Johnny Cash", 7.56, 10.99, 10);
-        Music music2 = new Music("The Essential Johnny Cash", "Johnny Cash", 12.64, 16.99, 5);
-        Music music3 = new Music("American Recordings", "Johnny Cash", 9.99, 9.99, 0);
-        Music music4 = new Music("Classic Nursery Rhymes", "Hap Palmer", 13.73, 0);
-        Music music5 = new Music("Classic Nursery Rhymes", "Susie Tallman", 11.47, 8.99, 1);
-        
-        music1.addRecommendation(music2);
-        music1.addRecommendation(music3);
-        music2.addRecommendation(music1);
-        music2.addRecommendation(music3);
-        music3.addRecommendation(music2);
-        music3.addRecommendation(music1);
-        music4.addRecommendation(music5);
-        music5.addRecommendation(music4);
-        
-        items.add(book1);
-        items.add(book2);
-        items.add(book3);
-        items.add(book4);
-        items.add(book5);
-        items.add(music1);
-        items.add(music2);
-        items.add(music3);
-        items.add(music4);
-        items.add(music5);
         
         System.out.println("Welcome to Daintree Store");
         

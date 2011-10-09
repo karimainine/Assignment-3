@@ -10,6 +10,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
+import java.util.Collection;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -22,6 +24,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import daintree.DaintreeStore;
+import daintree.Item;
+import daintree.User;
+
 import fileio.DaintreeFiles;
 
 /**
@@ -30,6 +36,11 @@ import fileio.DaintreeFiles;
  */
 public class DaintreeGUI extends JPanel{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     /**
      * @param args
      */
@@ -354,6 +365,16 @@ public class DaintreeGUI extends JPanel{
             String inputString = args[0];
             //String outputString = args[1];
             DaintreeFiles.loadFile(inputString);
+            /*Item.listAllItems(DaintreeStore.items, new User());
+            System.out.println("Users number: " + DaintreeStore.users.size());
+            Collection<User> users = DaintreeStore.users.values();
+            for(User user : users){
+                System.out.print(user.getName() + " - ");
+                if(user.getCart()!=null){
+                    user.getCart().viewCart();
+                }
+                System.out.println();
+            }*/
             initGUI();
         }else{
             System.out.println("Invalid Arguments");

@@ -225,4 +225,24 @@ public abstract class Item {
      * returns a string of the full description of the item
      */
     public abstract String listItem(User user);
+    
+    public static Item searchItem(String name, String author, ArrayList<Item> items){
+        Item result = null; 
+        for(Item item : items){
+            if(item.getName().equals(name)){
+                if(item instanceof Book){
+                    Book book = (Book)item;
+                    if(book.getAuthor().equals(author)){
+                        return item;
+                    }
+                }else if(item instanceof Music){
+                    Music music = (Music)item;
+                    if(music.getArtist().equals(author)){
+                        return item;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
