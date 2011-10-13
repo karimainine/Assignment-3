@@ -10,6 +10,6 @@ Java Program Design|Cohoon and Davidson|1|yes|51.0|10.0
 #users
 #id|password|name|email|shopper/admin|member/non-member[|cart-title1|cart-author1|ebook?]*for any items in cart 
 xla|xlpw|Xiang Li|xiang@daintree.com.au|admin
-xl|xlpw|Xiang Li|xiang@daintree.com.au|shopper|non-member
+xl|xlpw|Xiang Li|xiang@daintree.com.au|shopper|non-member|Absolute Java|Savitch|yes
 as|aspw|Andy Song|andy@daintree.com.au|shopper|member
 lc|lcpasswd|Lawrence Cavedon|lawrence@daintree.com.au|shopper|non-member|Absolute Java|Savitch|yes|Java Program Design|Cohoon and Davidson|yes

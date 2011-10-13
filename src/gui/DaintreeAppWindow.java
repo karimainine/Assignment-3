@@ -24,19 +24,20 @@ import fileio.DaintreeFiles;
 import javax.swing.ListSelectionModel;
 
 public class DaintreeAppWindow {
-    private static String outputFilePath;
-    private static JList itemsList = new JList();
+    private static String    outputFilePath;
+    private static JList     itemsList;
     private static JComboBox eItemComboBox;
     private static JComboBox itemTypeComboBox;
     private static JTextPane messageTextPane;
-    private static JLabel eAvailableLabel;
-    private JFrame frame;
+    private static JLabel    eAvailableLabel;
+    private JFrame           frame;
+    private static JList     usersList;
     
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
-        if(args.length == 2){
+        if (args.length == 2) {
             String inputString = args[0];
             DaintreeFiles.loadFile(inputString);
             outputFilePath = args[1];
@@ -50,13 +51,14 @@ public class DaintreeAppWindow {
                     }
                 }
             });
-        }else{
+        } else {
             System.out.println("Invalid Arguments");
         }
     }
     
     /**
      * Create the application.
+     * 
      * @wbp.parser.entryPoint
      */
     public DaintreeAppWindow() {
@@ -65,10 +67,12 @@ public class DaintreeAppWindow {
     
     private JList initUsersList() {
         Collection<User> users = DaintreeStore.users.values();
-        String [] usersArray = new String[users.size()];
-        int i=0;
-        for(User user:users){
-            usersArray[i] = user.getId() + ", " + user.getName();
+        String[] usersArray = new String[users.size()];
+        int i = 0;
+        for (User user : users) {
+            if (!(user instanceof Administrator)) {
+                usersArray[i] = user.getId() + ", " + user.getName();
+            }
             i++;
         }
         JList usersList = new JList(usersArray);
@@ -77,21 +81,23 @@ public class DaintreeAppWindow {
         return usersList;
     }
     
-    private JComboBox initItemType(){
-        String [] types = {"Book", "Music"};
+    private JComboBox initItemType() {
+        String[] types = { "Book", "Music" };
         itemTypeComboBox = new JComboBox(types);
         itemTypeComboBox.setBounds(250, 28, 210, 27);
-        ActionListener typeActionListener = new ActionListener(){
+        ActionListener typeActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                JComboBox cb = (JComboBox)e.getSource();
-                if(cb.getSelectedItem().toString().equals("Music")){
+                JComboBox cb = (JComboBox) e.getSource();
+                if (cb.getSelectedItem().toString().equals("Music")) {
                     eAvailableLabel.setText("E-Music");
-                    itemsList.setListData(getItemsArray(false, eItemComboBox.getSelectedItem().toString().equals("Yes")));
-                }else{
+                    itemsList.setListData(getItemsArray(false, eItemComboBox.getSelectedItem()
+                            .toString().equals("Yes")));
+                } else {
                     eAvailableLabel.setText("E-Book");
-                    itemsList.setListData(getItemsArray(true,  eItemComboBox.getSelectedItem().toString().equals("Yes")));
+                    itemsList.setListData(getItemsArray(true, eItemComboBox.getSelectedItem()
+                            .toString().equals("Yes")));
                 }
             }
         };
@@ -99,19 +105,21 @@ public class DaintreeAppWindow {
         return itemTypeComboBox;
     }
     
-    private JComboBox initEItem(){
-        String [] values = {"Yes", "No"};
+    private JComboBox initEItem() {
+        String[] values = { "Yes", "No" };
         eItemComboBox = new JComboBox(values);
         eItemComboBox.setBounds(493, 28, 237, 27);
-        ActionListener eItemActionListener = new ActionListener(){
+        ActionListener eItemActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                JComboBox cb = (JComboBox)e.getSource();
-                if(cb.getSelectedItem().toString().equals("Yes")){
-                    itemsList.setListData(getItemsArray(itemTypeComboBox.getSelectedItem().toString().equals("Book"), true));
-                }else{
-                    itemsList.setListData(getItemsArray(itemTypeComboBox.getSelectedItem().toString().equals("Book"), false));
+                JComboBox cb = (JComboBox) e.getSource();
+                if (cb.getSelectedItem().toString().equals("Yes")) {
+                    itemsList.setListData(getItemsArray(itemTypeComboBox.getSelectedItem()
+                            .toString().equals("Book"), true));
+                } else {
+                    itemsList.setListData(getItemsArray(itemTypeComboBox.getSelectedItem()
+                            .toString().equals("Book"), false));
                 }
             }
         };
@@ -119,33 +127,33 @@ public class DaintreeAppWindow {
         return eItemComboBox;
     }
     
-    private String[] getItemsArray(boolean isBook, boolean isElectronic){
+    private String[] getItemsArray(boolean isBook, boolean isElectronic) {
         ArrayList<Item> items = DaintreeStore.items;
         String[] itemsArray = new String[items.size()];
-        int i=0;
-        for(Item item:items){
-            if(isBook){
-                if(item instanceof Book){
-                    Book book = (Book)item;
-                    if(isElectronic){
-                        if(item.isElectronicallyAvailable()){
+        int i = 0;
+        for (Item item : items) {
+            if (isBook) {
+                if (item instanceof Book) {
+                    Book book = (Book) item;
+                    if (isElectronic) {
+                        if (item.isElectronicallyAvailable()) {
                             itemsArray[i] = book.getName() + " - " + book.getAuthor();
                         }
-                    }else{
-                        if(item.getNumberOfCopies() > 0){
+                    } else {
+                        if (item.getNumberOfCopies() > 0) {
                             itemsArray[i] = book.getName() + " - " + book.getAuthor();
                         }
                     }
                 }
-            }else{
-                if(item instanceof Music){
-                    Music music = (Music)item;
-                    if(isElectronic){
-                        if(item.isElectronicallyAvailable()){
+            } else {
+                if (item instanceof Music) {
+                    Music music = (Music) item;
+                    if (isElectronic) {
+                        if (item.isElectronicallyAvailable()) {
                             itemsArray[i] = music.getName() + " - " + music.getArtist();
                         }
-                    }else{
-                        if(item.getNumberOfCopies() > 0){
+                    } else {
+                        if (item.getNumberOfCopies() > 0) {
                             itemsArray[i] = music.getName() + " - " + music.getArtist();
                         }
                     }
@@ -155,19 +163,20 @@ public class DaintreeAppWindow {
         }
         return itemsArray;
     }
+    
     private JList initItemsList() {
         
-        itemsList = new JList(getItemsArray(true,true));
+        itemsList = new JList(getItemsArray(true, true));
         itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemsList.setBounds(258, 107, 490, 280);
         return itemsList;
-    } 
+    }
     
-    private Panel initBuyItemPanel(){
+    private Panel initBuyItemPanel() {
         Panel buyItemPanel = new Panel();
         buyItemPanel.setLayout(null);
-
-        //Initializing eSelection combo box
+        
+        // Initializing eSelection combo box
         eAvailableLabel = new JLabel("EBook");
         eAvailableLabel.setBounds(507, 6, 76, 16);
         buyItemPanel.add(eAvailableLabel);
@@ -175,7 +184,7 @@ public class DaintreeAppWindow {
         eItemComboBox = initEItem();
         buyItemPanel.add(eItemComboBox);
         
-        //Initializing Items List
+        // Initializing Items List
         JLabel itemsLabel = new JLabel("Matching Items");
         itemsLabel.setBounds(258, 79, 108, 16);
         buyItemPanel.add(itemsLabel);
@@ -183,7 +192,7 @@ public class DaintreeAppWindow {
         itemsList = initItemsList();
         buyItemPanel.add(itemsList);
         
-        //Initializing item type combo box
+        // Initializing item type combo box
         JLabel itemTypeLabel = new JLabel("Item Type");
         itemTypeLabel.setBounds(258, 6, 70, 16);
         buyItemPanel.add(itemTypeLabel);
@@ -191,22 +200,63 @@ public class DaintreeAppWindow {
         itemTypeComboBox = initItemType();
         buyItemPanel.add(itemTypeComboBox);
         
-        //Initializing users list
+        // Initializing users list
         JLabel usersLabel = new JLabel("Users");
         usersLabel.setBounds(6, 6, 41, 16);
         buyItemPanel.add(usersLabel);
         
-        JList usersList = initUsersList();
+        usersList = initUsersList();
         buyItemPanel.add(usersList);
-                
-        JButton purchaseButton = new JButton("Purchase");
-        purchaseButton.setBounds(631, 390, 117, 29);
+        
+        JButton purchaseButton = initPurchaseButton();
         buyItemPanel.add(purchaseButton);
         
         return buyItemPanel;
     }
     
-    private JButton initQuitButton(){
+    private void purchase(String userString, String itemString) {
+        String userId = userString.split(", ")[0];
+        User user = DaintreeStore.users.get(userId);
+        String itemName = itemString.split(" - ")[0];
+        String itemAuthor = itemString.split(" - ")[1];
+        Item item = Item.searchItem(itemName, itemAuthor, DaintreeStore.items);
+        double price = eItemComboBox.getSelectedItem().toString().equals("Yes") ? item
+                .getElectronicPrice() : item.getPhysicalPrice();
+        
+        if (!(user instanceof Member) && price > user.remainingPurchaseAmount()) {
+            messageTextPane.setText("Error: You have exceeded your purchase limit.");
+        } else {
+            Purchase purchase = new Purchase(item, eItemComboBox.getSelectedItem().toString()
+                    .equals("Yes"), price);
+            item.buy(eItemComboBox.getSelectedItem().toString().equals("Yes"));
+            user.getCart().addToCart(purchase, user);
+            messageTextPane.setText(itemName + "by " + itemAuthor + "has been added to "
+                    + user.getName() + "'s cart successfully.");
+        }
+    }
+    
+    private JButton initPurchaseButton() {
+        JButton purchaseButton = new JButton("Purchase");
+        purchaseButton.setBounds(631, 390, 117, 29);
+        ActionListener purchaseActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                if (usersList.getSelectedValue() == null) {
+                    messageTextPane.setText("Error: Please select a user");
+                } else if (itemsList.getSelectedValue() == null) {
+                    messageTextPane.setText("Error: Please select an item");
+                } else {
+                    purchase(usersList.getSelectedValue().toString(), itemsList.getSelectedValue()
+                            .toString());
+                }
+            }
+        };
+        purchaseButton.addActionListener(purchaseActionListener);
+        return purchaseButton;
+    }
+    
+    private JButton initQuitButton() {
         JButton cancelButton = new JButton("Quit");
         cancelButton.setBounds(547, 521, 117, 29);
         frame.getContentPane().add(cancelButton);
@@ -221,10 +271,10 @@ public class DaintreeAppWindow {
         return cancelButton;
     }
     
-    private JButton initSaveButton(){
+    private JButton initSaveButton() {
         JButton saveButton = new JButton("Save");
         saveButton.setBounds(664, 521, 117, 29);
-        ActionListener saveActionListener = new ActionListener(){
+        ActionListener saveActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 // TODO Auto-generated method stub
@@ -235,6 +285,7 @@ public class DaintreeAppWindow {
         saveButton.addActionListener(saveActionListener);
         return saveButton;
     }
+    
     /**
      * Initialize the contents of the frame.
      */
@@ -254,7 +305,7 @@ public class DaintreeAppWindow {
         tabbedPane.setBounds(6, 38, 775, 471);
         frame.getContentPane().add(tabbedPane);
         
-        //Initializing buy item panel
+        // Initializing buy item panel
         Panel buyItemPanel = initBuyItemPanel();
         tabbedPane.addTab("Buy an Item", null, buyItemPanel, null);
         
@@ -263,7 +314,7 @@ public class DaintreeAppWindow {
         
         frame.getContentPane().setFocusTraversalPolicy(
                 new FocusTraversalOnArray(new Component[] { tabbedPane, buyItemPanel }));
-       
+        
         frame.getContentPane().add(initQuitButton());
         frame.getContentPane().add(initSaveButton());
     }
