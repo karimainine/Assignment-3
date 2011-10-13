@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.JList;
@@ -32,6 +32,89 @@ public class DaintreeAppWindow {
     private static JLabel    eAvailableLabel;
     private JFrame           frame;
     private static JList     usersList;
+    private JTextField       userIdTextField;
+    private JTextField       userNameTextField;
+    private JTextField       userPasswordTextField;
+    private JComboBox        userTypeComboBox;
+    private JList            shoppingCartList;
+    private static JList     manageUsersUsersList;
+    
+    private Panel initManageUsersPanel() {
+        
+        Panel manageUsersPanel = new Panel();
+        manageUsersPanel.setLayout(null);
+        
+        JLabel createUserLabel = new JLabel("Create New User");
+        createUserLabel.setBounds(0, 0, 150, 30);
+        manageUsersPanel.add(createUserLabel);
+        
+        //Initializing user id textField
+        JLabel userIdLabel = new JLabel("Id");
+        userIdLabel.setBounds(0, 35, 15, 30);
+        manageUsersPanel.add(userIdLabel);
+        
+        userIdTextField = new JTextField();
+        userIdTextField.setBounds(15, 35, 150, 30);
+        manageUsersPanel.add(userIdTextField);
+        
+        //Initializing user name textField
+        JLabel userNameLabel = new JLabel("Name");
+        userNameLabel.setBounds(165, 35, 40, 30);
+        manageUsersPanel.add(userNameLabel);
+        
+        userNameTextField = new JTextField();
+        userNameTextField.setBounds(205, 35, 150, 30);
+        manageUsersPanel.add(userNameTextField);
+        
+        //Initializing user password textField
+        JLabel userPasswordLabel = new JLabel("Password");
+        userPasswordLabel.setBounds(355, 35, 60, 30);
+        manageUsersPanel.add(userPasswordLabel);
+        
+        userPasswordTextField = new JTextField();
+        userPasswordTextField.setBounds(415, 35, 150, 30);
+        manageUsersPanel.add(userPasswordTextField);
+        
+        //Initializing user type comboBox
+        JLabel userTypeLabel = new JLabel("Type");
+        userTypeLabel.setBounds(565, 35, 40, 30);
+        manageUsersPanel.add(userTypeLabel);
+        
+        String [] userTypes = {"Admin", "Shopper", "Member"};
+        userTypeComboBox = new JComboBox(userTypes);
+        userTypeComboBox.setBounds(605, 35, 150, 30);
+        manageUsersPanel.add(userTypeComboBox);
+        
+        //Initializing create User Button
+        JButton createUserButton = new JButton("Create User");
+        createUserButton.setBounds(605, 70, 150, 30);
+        manageUsersPanel.add(createUserButton);
+        
+        //Initializing Users List
+        JLabel usersListLabel = new JLabel("Users");
+        usersListLabel.setBounds(100, 95, 50, 30);
+        manageUsersPanel.add(usersListLabel);
+        
+        manageUsersUsersList = new JList(getUsers());
+        manageUsersUsersList.setBounds(100, 125, 210, 250);
+        manageUsersPanel.add(manageUsersUsersList);
+        
+        //Initializing Users shopping cart
+        JLabel shoppingCartLabel = new JLabel("Shopping Cart");
+        shoppingCartLabel.setBounds(325, 95, 150, 30);
+        manageUsersPanel.add(shoppingCartLabel);
+        
+        shoppingCartList = new JList();
+        shoppingCartList.setBounds(325, 125, 270, 250);
+        manageUsersPanel.add(shoppingCartList);
+        
+        //Initializing Remove Button
+        JButton removeButton = new JButton("Remove");
+        removeButton.setBounds(445, 380, 150, 30);
+        manageUsersPanel.add(removeButton);
+        
+        return manageUsersPanel;
+    }
     
     /**
      * Launch the application.
@@ -65,7 +148,7 @@ public class DaintreeAppWindow {
         initialize();
     }
     
-    private JList initUsersList() {
+    private String[] getUsers(){
         Collection<User> users = DaintreeStore.users.values();
         String[] usersArray = new String[users.size()];
         int i = 0;
@@ -75,7 +158,11 @@ public class DaintreeAppWindow {
             }
             i++;
         }
-        JList usersList = new JList(usersArray);
+        return usersArray;
+    }
+    private JList initUsersList() {
+        
+        JList usersList = new JList(getUsers());
         usersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         usersList.setBounds(6, 28, 210, 359);
         return usersList;
@@ -309,7 +396,7 @@ public class DaintreeAppWindow {
         Panel buyItemPanel = initBuyItemPanel();
         tabbedPane.addTab("Buy an Item", null, buyItemPanel, null);
         
-        JPanel manageUsersPanel = new JPanel();
+        Panel manageUsersPanel = initManageUsersPanel();
         tabbedPane.addTab("Manage Users", null, manageUsersPanel, null);
         
         frame.getContentPane().setFocusTraversalPolicy(
