@@ -363,8 +363,10 @@ public class DaintreeGUI extends JPanel{
         // TODO Auto-generated method stub
         if(args.length == 2){
             String inputString = args[0];
-            //String outputString = args[1];
             DaintreeFiles.loadFile(inputString);
+            
+            //String outputString = args[1];
+            //DaintreeFiles.Save(outputString);
             /*Item.listAllItems(DaintreeStore.items, new User());
             System.out.println("Users number: " + DaintreeStore.users.size());
             Collection<User> users = DaintreeStore.users.values();
@@ -375,7 +377,7 @@ public class DaintreeGUI extends JPanel{
                 }
                 System.out.println();
             }*/
-            initGUI();
+            //initGUI();
         }else{
             System.out.println("Invalid Arguments");
         }

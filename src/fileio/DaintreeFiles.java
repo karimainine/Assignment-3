@@ -3,7 +3,9 @@ package fileio;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.StringTokenizer;
 import daintree.*;
 
@@ -151,13 +153,80 @@ public class DaintreeFiles {
         String name = tokenItems.get(0);
         String author = tokenItems.get(1);
         Item item = Item.searchItem(name, author, DaintreeStore.items);
-        if(item == null){
+        if (item == null) {
             System.out.println("Invalid file format");
             System.exit(0);
         }
         boolean isEbook = tokenItems.get(2).toString().equalsIgnoreCase("yes") ? true : false;
-        double price = isEbook?item.getElectronicPrice():item.getPhysicalPrice();
+        double price = isEbook ? item.getElectronicPrice() : item.getPhysicalPrice();
         Purchase purchase = new Purchase(item, isEbook, price);
         user.getCart().addToCart(purchase, user);
+    }
+    
+    public static void Save(String path) {
+        FileWriter writer = null;
+        
+        try {
+            writer = new FileWriter(path);
+            
+            writer.write("#books\n");
+            writer.write("#title|author|no. of copies|ebook?(yes,no)|physical-price|ebook-price\n");
+            // loop for the books and write them
+            for (Item item : DaintreeStore.items) {
+                if (item instanceof Book) {
+                    Book book = (Book) item;
+                    writer.write(book.getName() + "|"
+                            + book.getAuthor() + "|"
+                            + book.getNumberOfCopies() + "|"
+                            + (book.isElectronicallyAvailable() ? "yes" : "no") + "|"
+                            + book.getPhysicalPrice() + "|"
+                            + book.getElectronicPrice() + "\n");
+                }
+            }
+            writer.write("#music\n");
+            writer.write("#title|artist|no. of copies|eMusic?(yes,no)|physical-price|e-price\n");
+            // loop for the music and write them
+            for (Item item : DaintreeStore.items) {
+                if (item instanceof Music) {
+                    Music music = (Music) item;
+                    writer.write(music.getName() + "|"
+                            + music.getArtist() + "|"
+                            + music.getNumberOfCopies() + "|"
+                            + (music.isElectronicallyAvailable() ? "yes" : "no") + "|"
+                            + music.getPhysicalPrice() + "|"
+                            + music.getElectronicPrice() + "\n");
+                }
+            }
+            writer.write("#users\n#id|password|name|email|shopper/admin|member/non-member[|cart-title1|cart-author1|ebook?]*for any items in cart \n");
+            // loop for the users and write them
+            Collection<User> users = DaintreeStore.users.values();
+            for (User user : users) {
+                writer.write(user.getId()+"|"
+                        + user.getPassword()+"|"
+                        + user.getName()+ "|"
+                        + user.getEmail()+"|"
+                        + (user instanceof Administrator ? "admin" : "shopper")
+                        + (user instanceof Member ? "|member" : (user instanceof Administrator ? ""
+                                : "|non-member")));
+                if(user.getCart().getPurchases().size()>0){
+                    for(Purchase purchase:user.getCart().getPurchases()){
+                        Item item = purchase.getItem();
+                        if(item instanceof Book){
+                            Book book = (Book)item;
+                            writer.write("|"+book.getName()+"|"+book.getAuthor()+"|"+(book.isElectronicallyAvailable()?"yes":"no"));
+                        }else{
+                            Music music = (Music)item;
+                            writer.write("|"+music.getName()+"|"+music.getArtist()+"|"+(music.isElectronicallyAvailable()?"yes":"no"));
+                        }
+                    }
+                }
+                writer.write("\n");
+            }
+            writer.close();
+            
+        } catch (Exception e) {
+            System.err.println("File cannot be created, or cannot be opened");
+            System.exit(0);
+        }
     }
 }
