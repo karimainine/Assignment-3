@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
@@ -22,6 +23,8 @@ import java.util.Collection;
 import daintree.*;
 import fileio.DaintreeFiles;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class DaintreeAppWindow {
     private static String    outputFilePath;
@@ -34,7 +37,7 @@ public class DaintreeAppWindow {
     private static JList     usersList;
     private JTextField       userIdTextField;
     private JTextField       userNameTextField;
-    private JTextField       userPasswordTextField;
+    private JPasswordField   userPasswordTextField;
     private JComboBox        userTypeComboBox;
     private JList            shoppingCartList;
     private static JList     manageUsersUsersList;
@@ -48,7 +51,7 @@ public class DaintreeAppWindow {
         createUserLabel.setBounds(0, 0, 150, 30);
         manageUsersPanel.add(createUserLabel);
         
-        //Initializing user id textField
+        // Initializing user id textField
         JLabel userIdLabel = new JLabel("Id");
         userIdLabel.setBounds(0, 35, 15, 30);
         manageUsersPanel.add(userIdLabel);
@@ -57,7 +60,7 @@ public class DaintreeAppWindow {
         userIdTextField.setBounds(15, 35, 150, 30);
         manageUsersPanel.add(userIdTextField);
         
-        //Initializing user name textField
+        // Initializing user name textField
         JLabel userNameLabel = new JLabel("Name");
         userNameLabel.setBounds(165, 35, 40, 30);
         manageUsersPanel.add(userNameLabel);
@@ -66,54 +69,167 @@ public class DaintreeAppWindow {
         userNameTextField.setBounds(205, 35, 150, 30);
         manageUsersPanel.add(userNameTextField);
         
-        //Initializing user password textField
+        // Initializing user password textField
         JLabel userPasswordLabel = new JLabel("Password");
         userPasswordLabel.setBounds(355, 35, 60, 30);
         manageUsersPanel.add(userPasswordLabel);
         
-        userPasswordTextField = new JTextField();
+        userPasswordTextField = new JPasswordField();
         userPasswordTextField.setBounds(415, 35, 150, 30);
         manageUsersPanel.add(userPasswordTextField);
         
-        //Initializing user type comboBox
+        // Initializing user type comboBox
         JLabel userTypeLabel = new JLabel("Type");
         userTypeLabel.setBounds(565, 35, 40, 30);
         manageUsersPanel.add(userTypeLabel);
         
-        String [] userTypes = {"Admin", "Shopper", "Member"};
+        String[] userTypes = { "Admin", "Shopper", "Member" };
         userTypeComboBox = new JComboBox(userTypes);
         userTypeComboBox.setBounds(605, 35, 150, 30);
         manageUsersPanel.add(userTypeComboBox);
         
-        //Initializing create User Button
-        JButton createUserButton = new JButton("Create User");
+        // Initializing create User Button
+        JButton createUserButton = InitCreateUserButton();
         createUserButton.setBounds(605, 70, 150, 30);
         manageUsersPanel.add(createUserButton);
         
-        //Initializing Users List
+        // Initializing Users List
         JLabel usersListLabel = new JLabel("Users");
-        usersListLabel.setBounds(100, 95, 50, 30);
+        usersListLabel.setBounds(0, 95, 50, 30);
         manageUsersPanel.add(usersListLabel);
         
-        manageUsersUsersList = new JList(getUsers());
-        manageUsersUsersList.setBounds(100, 125, 210, 250);
+        initManageUsersUsersList();
         manageUsersPanel.add(manageUsersUsersList);
         
-        //Initializing Users shopping cart
+        // Initializing Users shopping cart
         JLabel shoppingCartLabel = new JLabel("Shopping Cart");
-        shoppingCartLabel.setBounds(325, 95, 150, 30);
+        shoppingCartLabel.setBounds(225, 95, 250, 30);
         manageUsersPanel.add(shoppingCartLabel);
         
         shoppingCartList = new JList();
-        shoppingCartList.setBounds(325, 125, 270, 250);
+        shoppingCartList.setBounds(225, 125, 500, 250);
         manageUsersPanel.add(shoppingCartList);
         
-        //Initializing Remove Button
-        JButton removeButton = new JButton("Remove");
-        removeButton.setBounds(445, 380, 150, 30);
+        // Initializing Remove Button
+        JButton removeButton = InitRemoveButton();
         manageUsersPanel.add(removeButton);
         
         return manageUsersPanel;
+    }
+    
+    private void initManageUsersUsersList() {
+        manageUsersUsersList = new JList(getUsers());
+        manageUsersUsersList.setBounds(0, 125, 210, 250);
+        ListSelectionListener listener = new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // TODO Auto-generated method stub
+                JList list = (JList) e.getSource();
+                if (list.getSelectedValue() != null) {
+                    String userId = list.getSelectedValue().toString().split(", ")[0];
+                    User user = DaintreeStore.users.get(userId);
+                    shoppingCartList.setListData(getUserCart(user));
+                }
+            }
+        };
+        manageUsersUsersList.addListSelectionListener(listener);
+    }
+    
+    private JButton InitRemoveButton() {
+        JButton removeButton = new JButton("Remove");
+        removeButton.setBounds(575, 380, 150, 30);
+        ActionListener listener = new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                // TODO Auto-generated method stub
+                if (manageUsersUsersList.getSelectedValue() == null) {
+                    messageTextPane.setText("Error: You must select a user then an item first");
+                } else if (shoppingCartList.getSelectedValue() == null) {
+                    messageTextPane.setText("Error: You must select item");
+                } else {
+                    String userId = manageUsersUsersList.getSelectedValue().toString().split(", ")[0];
+                    User user = DaintreeStore.users.get(userId);
+                    Purchase purchase = user.getCart().getPurchases()
+                            .get(shoppingCartList.getSelectedIndex());
+                    purchase.getItem().returnItem(purchase.isElectronic());
+                    user.getCart().getPurchases().remove(shoppingCartList.getSelectedIndex());
+                    shoppingCartList.setListData(getUserCart(user));
+                    messageTextPane.setText("You have successfully removed the "
+                            + purchase.display()
+                            + " from " + user.getName() + "'s cart.");
+                }
+            }
+        };
+        removeButton.addActionListener(listener);
+        return removeButton;
+    }
+    
+    private JButton InitCreateUserButton() {
+        JButton createUserButton = new JButton("Create User");
+        createUserButton.setBounds(605, 70, 150, 30);
+        ActionListener listener = new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                // TODO Auto-generated method stub
+                if(userIdTextField.getText() == null || userNameTextField.getText() == null || userPasswordTextField.getPassword().length <= 0 || userTypeComboBox.getSelectedItem() == null){
+                    messageTextPane.setText("Error: Please fill in all the user's details.");
+                }else{
+                    String id = userIdTextField.getText();
+                    String name = userNameTextField.getText();
+                    String password = userPasswordTextField.getPassword().toString();
+                    int type = userTypeComboBox.getSelectedIndex();
+                    User user = null;
+                    if(DaintreeStore.users.containsKey(id)){
+                        messageTextPane.setText("Error: User ID already exists. Please try again with a different ID");
+                    }else{
+                        switch(type){
+                        case 0:
+                        {
+                            user = new Administrator(id, name, "", password);
+                            DaintreeStore.users.put(user.getId(), user);
+                            messageTextPane.setText(user.getName() + " has been created as an Admin successfully.");
+                            break;
+                        }
+                        case 1:
+                        {
+                            user = new User(id, name, "", password);
+                            DaintreeStore.users.put(user.getId(), user);
+                            messageTextPane.setText(user.getName() + " has been created as a Shopper successfully.");
+                            break;
+                        }
+                        case 2:
+                        {
+                            user = new Member(id, name, "", password);
+                            DaintreeStore.users.put(user.getId(), user);
+                            messageTextPane.setText(user.getName() + " has been created as a Member successfully.");
+                            break;
+                        }
+                        default:
+                        {
+                            messageTextPane.setText("Error: Unknown error occurred while creating a new user.");
+                        }
+                        }
+                        manageUsersUsersList.setListData(getUsers());
+                        usersList.setListData(getUsers());
+                    }
+                    
+                }
+            }
+        };
+        createUserButton.addActionListener(listener);
+        return createUserButton;
+    }
+    
+    private String[] getUserCart(User user) {
+        String[] cartArray = new String[user.getCart().getPurchases().size()];
+        int i = 0;
+        for (Purchase purchase : user.getCart().getPurchases()) {
+            cartArray[i] = purchase.display();
+            i++;
+        }
+        return cartArray;
     }
     
     /**
@@ -148,7 +264,7 @@ public class DaintreeAppWindow {
         initialize();
     }
     
-    private String[] getUsers(){
+    private String[] getUsers() {
         Collection<User> users = DaintreeStore.users.values();
         String[] usersArray = new String[users.size()];
         int i = 0;
@@ -160,6 +276,7 @@ public class DaintreeAppWindow {
         }
         return usersArray;
     }
+    
     private JList initUsersList() {
         
         JList usersList = new JList(getUsers());
@@ -317,7 +434,7 @@ public class DaintreeAppWindow {
                     .equals("Yes"), price);
             item.buy(eItemComboBox.getSelectedItem().toString().equals("Yes"));
             user.getCart().addToCart(purchase, user);
-            messageTextPane.setText(itemName + "by " + itemAuthor + "has been added to "
+            messageTextPane.setText(itemName + "by " + itemAuthor + " has been added to "
                     + user.getName() + "'s cart successfully.");
         }
     }
